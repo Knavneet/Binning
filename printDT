@@ -1,0 +1,27 @@
+def tree_to_pseudo(tree, feature_names):
+    left = tree.tree_.children_left
+    right = tree.tree_.children_right
+    threshold = tree.tree_.threshold
+    features = [feature_names[i] for i in tree.tree_.feature]
+    value = tree.tree_.value
+    a_list = []
+    def recurse(left, right, threshold, features, node, depth=0):
+        indent = "  " * depth
+        if (threshold[node] != -2):
+            print indent,"if ( " + features[node] + " <= " + str(threshold[node]) + " ) {"
+            if left[node] != -1:
+                recurse (left, right, threshold, features, left[node], depth+1)
+                print indent,"} else {"
+                if right[node] != -1:
+                    recurse (left, right, threshold, features, right[node], depth+1)
+                print indent,"}"
+                a_list.append((features[node],threshold[node]))    
+        else:
+            a_list.append((features[node],threshold[node]))    
+            print indent,"return " + str(value[node])
+        return a_list
+
+    recurse(left, right, threshold, features, 0)
+    return a_list
+    
+a_list = tree_to_pseudo(dt, fram.iloc[:,0:6].columns)
